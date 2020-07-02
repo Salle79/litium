@@ -17,3 +17,5 @@ Src/Litium.Accelerator.Mvc/App_Data/
 .vs/
 Src/Litium.Accelerator.FieldTypes/npm-debug.log
 *.xml
+/..gitignore.swp
+/.gitignore.save
