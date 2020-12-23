@@ -272,7 +272,7 @@ obj/
 Src/Files/
 Src/Web/App_Data/
 Src/Litium.Accelerator.Mvc/App_Data/
-Src/Litium.Accelerator.Mvc/ui/
+Src/Litium.Accelerator.Mvc/UI/
 Src/Litium.Accelerator.Mvc/Site/Deployments/
 Src/Litium.Accelerator.FieldTypes/npm-debug.log
 Src/Litium.Accelerator.FieldTypes/dist/
