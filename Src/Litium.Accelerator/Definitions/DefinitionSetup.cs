@@ -148,7 +148,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<Role>(item.Id))
                 {
-                    continue;
+                    //continue;
                 }
                 var currentField = _roleService.Get(item.Id);
                 if (currentField != null)
@@ -166,7 +166,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<Category>(category.Id))
                 {
-                    continue;
+                    //continue;
                 }
                 var currentCategory = _categoryService.Get(category.Id);
                 if (currentCategory != null)
@@ -184,7 +184,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<DisplayTemplate>(displayTemplate.Id))
                 {
-                    continue;
+                    //continue;
                 }
                 var currentField = _displayTemplateService.Get<DisplayTemplate>(displayTemplate.Id);
                 if (currentField != null)
@@ -202,7 +202,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<FieldDefinition>(item.Id, item.AreaType.Name))
                 {
-                    continue;
+                    //continue;
                 }
 
                 var currentField = _fieldDefinitionService.Get(item.AreaType, item.Id);
@@ -237,7 +237,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<RelationshipType>(item.Id))
                 {
-                    continue;
+                    //continue;
                 }
                 var currentItem = _relationshipTypeService.Get(item.Id);
                 if (currentItem != null)
@@ -255,7 +255,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<AddressType>(type.Id)) 
                 {
-                    continue;
+                    //continue;
                 }
                 var currentField = _addressTypeService.Get(type.Id);
                 if (currentField != null)
@@ -273,7 +273,7 @@ namespace Litium.Accelerator.Definitions
             {
                 if (IsAlreadyExecuted<FieldTemplate>(item.Id, item.AreaType.Name))
                 {
-                    continue;
+                    //continue;
                 }
 
                 var currentField = _fieldTemplateService.Get<FieldTemplate>(item.AreaType, item.Id);
