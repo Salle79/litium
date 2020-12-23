@@ -1,2 +1,22 @@
-/ui
-/.vscode
+# Gitignore for litium Accelerator
+
+*.user
+*.suo
+litium*.log
+elasticsearch*.log
+License*.config
+
+bin/
+obj/
+packages/
+node_modules/
+
+Src/Files/
+Src/Web/App_Data/
+Src/Litium.Accelerator.Mvc/App_Data/
+Src/Litium.Accelerator.Mvc/UI/
+.vs/
+Src/Litium.Accelerator.FieldTypes/npm-debug.log
+*.xml
+/..gitignore.swp
+/.gitignore.save
