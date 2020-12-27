@@ -29,6 +29,7 @@ namespace Litium.Accelerator.Mvc.Definitions
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.MyPages)] = (typeof(Controllers.MyPages.MyPagesController), nameof(Controllers.MyPages.MyPagesController.Index)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.NewsList)] = (typeof(Controllers.News.NewsController), nameof(Controllers.News.NewsController.List)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.News)] = (typeof(Controllers.News.NewsController), nameof(Controllers.News.NewsController.Index)),
+            [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.Station)] = (typeof(Controllers.Station.StationController), nameof(Controllers.Station.StationController.Index)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.OrderConfirmationEmail)] = (typeof(Controllers.Order.OrderController), nameof(Controllers.Order.OrderController.Order)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.OrderConfirmation)] = (typeof(Controllers.Order.OrderController), nameof(Controllers.Order.OrderController.Confirmation)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.OrderHistory)] = (typeof(Controllers.Order.OrderController), nameof(Controllers.Order.OrderController.List)),

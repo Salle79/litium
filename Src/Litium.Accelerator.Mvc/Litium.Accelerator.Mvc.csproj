@@ -71,6 +71,7 @@
     <Compile Include="Attributes\FromJsonBodyAttribute.cs" />
     <Compile Include="Attributes\OrganizationRoleAttribute.cs" />
     <Compile Include="Attributes\ApiValidateAntiForgeryTokenAttribute.cs" />
+    <Compile Include="Controllers\Station\StationController.cs" />
     <Compile Include="Extensions\BlockContainerHelperExtension.cs" />
     <Compile Include="Controllers\Api\MyPageAddressController.cs" />
     <Compile Include="Controllers\Api\CheckoutController.cs" />
@@ -260,6 +261,7 @@
     <Content Include="Litium\web.config" />
     <Content Include="Litium\Framework\ControlPanel.master" />
     <None Include="packages.config" />
+    <Content Include="Views\Station\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

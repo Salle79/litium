@@ -1,0 +1,230 @@
+﻿@using Litium.Web.Mvc;
+@using System.Configuration
+@using Litium.Accelerator.Constants
+@model Litium.Accelerator.ViewModels.Station.StationViewModel
+
+@{
+    var stationIsOpen = (Model.SummerSeasonStartDate <= DateTime.Now.Date && Model.SummerSeasonEndDate >= DateTime.Now.Date) || (Model.WinterSeasonStartDate <= DateTime.Now.Date && Model.WinterSeasonEndDate >= DateTime.Now.Date);
+
+    var closesDate = DateTime.MinValue;
+    if (Model.SummerSeasonEndDate >= DateTime.Now.Date)
+    {
+        closesDate = Model.SummerSeasonEndDate;
+    }
+    else if (Model.WinterSeasonEndDate >= DateTime.Now.Date)
+    {
+        closesDate = Model.WinterSeasonEndDate;
+    }
+
+    var opensDate = DateTime.MinValue;
+    if (Model.SummerSeasonStartDate >= DateTime.Now.Date)
+    {
+        opensDate = Model.SummerSeasonStartDate;
+    }
+    else if (Model.WinterSeasonStartDate >= DateTime.Now.Date)
+    {
+        opensDate = Model.WinterSeasonStartDate;
+    }
+}
+
+<div class="station-page">
+    <div class="row">
+        <div class="large-4 small-12 station-page__heading-section">
+            <h1>@Model.Name</h1>
+            @if (stationIsOpen)
+            {
+                <div class="station-page__station-open-text">
+                    <div class="station-page__station-open-text--open">@Html.WebSiteString("station.stationisopen")</div>
+                    @if (closesDate > DateTime.MinValue)
+                    {
+                        @($"{Html.WebSiteString("station.stationcloses")} {closesDate:d MMMM}")
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="station-page__station-open-text">
+                    <div class="station-page__station-open-text--closed">@Html.WebSiteString("station.stationisclosed")</div>
+                    @if (opensDate > DateTime.MinValue)
+                    {
+                        @($"{Html.WebSiteString("station.stationopens")} {opensDate:d MMMM}")
+                    }
+                </div>
+            }
+            @Html.Raw(Model.Text)
+
+            @if (!string.IsNullOrWhiteSpace(Model.LocationDescription))
+            {
+                @Html.Raw(Model.LocationDescription)
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.AddressStreetAddress) && !string.IsNullOrWhiteSpace(Model.AddressZipcode) && !string.IsNullOrWhiteSpace(Model.AddressCity))
+            {
+                <p>
+                    <h6>
+                        @Model.AddressStreetAddress<br />
+                        @Model.AddressZipcode @Model.AddressCity
+                    </h6>
+                </p>
+            }
+            @if (!string.IsNullOrWhiteSpace(Model.CoordinatesLat) && !string.IsNullOrWhiteSpace(Model.CoordinatesLong))
+            {
+                var googleMapsLink = "https://www.google.com/maps/place/" + Model.CoordinatesLat + "," + Model.CoordinatesLong;
+                <a href="@googleMapsLink">@Html.WebSiteString("station.opengooglemaps")</a>
+            }
+        </div>
+        <div class="large-8 small-12 station-page__service-map-datestime-section">
+            <div class="large-6 small-12 station-page__services-section">
+                @if (Model.Services != null && Model.Services.Any())
+                {
+                    foreach (var service in Model.Services)
+                    {
+                        if (service.Variants != null)
+                        {
+                            var groupPerUnitText = service.Variants.Count == 1 && !string.IsNullOrWhiteSpace(service.Variants[0].PerUnitText) ? " / " + service.Variants[0].PerUnitText : "";
+
+                            <div class="station-page__service-group">
+                                <label class="station-page__service-group-header @(service.Variants.Count == 1 ? "station-page__service-group-header--no-accordion" : "")">
+                                    <span class="station-page__service-group-header--heading">
+                                        @Html.ImageFor(x => service.Icon, maxSize: new Size(30, -1), htmlAttributes: new { @class = "station-page__service-group-header--icon" })
+                                        @service.Name
+                                        @if (service.Variants.Count == 1)
+                                        {
+                                            <span class="price">&nbsp;@string.Format("{0:C0}", service.Variants[0].Price) @groupPerUnitText</span>
+                                        }
+                                    </span>
+                                </label>
+                                @if (service.Variants.Count > 1)
+                                {
+                                    <div class="station-page__service-group-content">
+                                        @foreach (var variant in service.Variants)
+                                        {
+                                            var perUnitText = !string.IsNullOrWhiteSpace(variant.PerUnitText) ? "/ " + variant.PerUnitText : "";
+
+                                            <div>
+                                                @variant.VariantName
+                                                <span class="price">&nbsp;@string.Format("{0:C0}", variant.Price) @perUnitText</span>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(Model.ServiceText))
+                    {
+                        <div class="station-page__services-text">
+                            @MvcHtmlString.Create(Model.ServiceText.Replace("\n", "<br />"))
+                        </div>
+                    }
+                }
+            </div>
+            <div class="large-6 small-12 station-page__map-section">
+                @if (!string.IsNullOrWhiteSpace(Model.CoordinatesLat) && !string.IsNullOrWhiteSpace(Model.CoordinatesLong))
+                {
+                    <div id="googleMap"></div>
+                    <script>
+                        function stationMap() {
+                            var mapProp = {
+                                center: new google.maps.LatLng(@Model.CoordinatesLat, @Model.CoordinatesLong),
+                                zoom: 11,
+                            };
+
+                            var map = new google.maps.Map(document.getElementById("googleMap"), mapProp);
+
+                            var stationMarker = new google.maps.Marker({
+                                position: new google.maps.LatLng(@Model.CoordinatesLat, @Model.CoordinatesLong),
+                                map: map,
+                                title: '@Model.Name',
+                                icon: markerIcon()
+                            })
+                        }
+
+                        function markerIcon() {
+                            return {
+                                // The marker icon SVG path
+                                path: 'M11.83.09A8.08,8.08,0,0,0,3.75,8.17c0,2.37,1.89,6.37,3.49,9.37.81,1.52,1.69,3.08,2.49,4.28,1.3,2,1.61,2.18,2.1,2.18s.8-.24,2.11-2.18c.77-1.2,1.69-2.76,2.49-4.28,1.59-3,3.48-7,3.48-9.37A8.08,8.08,0,0,0,11.83.09Zm0,11.05a3,3,0,1,1,3-3A3,3,0,0,1,11.83,11.14Z',
+                                fillColor: '@Model.MapPinColor',
+                                fillOpacity: 1,
+                                strokeWeight: 0,
+                                scale: 1.2,
+                                anchor: new google.maps.Point(10, 25)
+                            };
+                        }
+                    </script>
+                    var googleMapsApiKey = ConfigurationManager.AppSettings["GoogleMapsApiKey"];
+                    <script async defer src="https://maps.googleapis.com/maps/api/js?key=@googleMapsApiKey&callback=stationMap"></script>
+                }
+            </div>
+            <div class="small-12 station-page__datestime-section">
+                @if (!string.IsNullOrWhiteSpace(Model.OpeningHours))
+                {
+                    <div class="medium-4 small-12">
+                        <h5>@Html.WebSiteString("station.openinghours")</h5>
+                        @MvcHtmlString.Create(Model.OpeningHours.Replace("\n", "<br />"))
+                    </div>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.DeviantOpeningHours))
+                {
+                    <div class="medium-4 small-12">
+                        <h5>@Html.WebSiteString("station.deviantopeninghours")</h5>
+                        @MvcHtmlString.Create(Model.DeviantOpeningHours.Replace("\n", "<br />"))
+                    </div>
+                }
+                <div class="medium-4 small-12">
+                    <h5>@Html.WebSiteString("station.dateforopeninghours")</h5>
+                    @if (Model.SummerSeasonStartDate != DateTime.MinValue && Model.SummerSeasonEndDate != DateTime.MinValue)
+                    {
+                        @Html.WebSiteString("station.summerseason")
+                        @($" {Model.SummerSeasonStartDate.ToString("d MMMM")} - {Model.SummerSeasonEndDate.ToString("d MMMM")}")
+                        <br />
+                    }
+                    @if (Model.WinterSeasonStartDate != DateTime.MinValue && Model.WinterSeasonEndDate != DateTime.MinValue)
+                    {
+                        @Html.WebSiteString("station.winterseason")
+                        @($" {Model.WinterSeasonStartDate.ToString("d MMMM")} - {Model.WinterSeasonEndDate.ToString("d MMMM")}")
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    @if (Model.Blocks.Any(b => b.Key == BlockContainerNameConstant.Main))
+    {
+        @Html.BlockContainer(Model.Blocks, BlockContainerNameConstant.Main);
+    }
+
+    <div class="row station-page__otherinfo-section">
+        <div class="large-6 small-12">
+            @if (!string.IsNullOrWhiteSpace(Model.InformationTextOnLeft))
+            {
+                @Html.Raw(Model.InformationTextOnLeft)
+            }
+
+            <h5>@Html.WebSiteString("station.contact")</h5>
+
+            @if (!string.IsNullOrWhiteSpace(Model.LocalManagerName))
+            {
+                <p>@Html.WebSiteString("station.localmanagername") @Model.LocalManagerName</p>
+            }
+            <p>
+                @if (!string.IsNullOrWhiteSpace(Model.Phone))
+                {
+                    @Html.WebSiteString("station.phone") <a href="tel:@Model.Phone">@Model.Phone</a><br />
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                {
+                    @Html.WebSiteString("station.email") <a href="mailto:@Model.Email">@Model.Email</a>
+                }
+            </p>
+        </div>
+        <div class="large-6 small-12">
+            @if (!string.IsNullOrWhiteSpace(Model.InformationTextOnRight))
+            {
+                @Html.Raw(Model.InformationTextOnRight)
+            }
+        </div>
+    </div>
+</div>
