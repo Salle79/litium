@@ -261,7 +261,8 @@
     <Content Include="Litium\web.config" />
     <Content Include="Litium\Framework\ControlPanel.master" />
     <None Include="packages.config" />
-    <Content Include="Views\Station\Index.cshtml" />
+    <Content Include="Views\Station\Station.cshtml" />
+    <Content Include="Views\Station\StationList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

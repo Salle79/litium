@@ -88,9 +88,9 @@ namespace Litium.Accelerator.Services
             request.FilterTags.Add(new Tag(TagNames.TemplateId, PageTemplateNameConstants.Station));
 
             var result = _searchService.Search(request);
-
-            return _pageService.Get(result.Hits.Select(x => new Guid(x.Id)))
-                       ?.OrderBy(x => x.Localizations.CurrentCulture.Name);
+             var findings = _pageService.Get(result.Hits.Select(x => new Guid(x.Id)))
+                 ?.OrderBy(x => x.Localizations.CurrentCulture.Name);
+             return findings;
         }
 
         public override Guid? GetStationDeliveryMethodId()

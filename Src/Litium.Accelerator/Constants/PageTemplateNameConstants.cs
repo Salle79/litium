@@ -24,5 +24,6 @@
         public const string OrderConfirmationEmail = "OrderConfirmationEmail";
         public const string OrderConfirmation = "OrderConfirmation";
         public const string Station = "Station";
+        public const string StationList = "StationList";
     }
 }

@@ -1,0 +1,187 @@
+﻿@using Litium.Web.Mvc;
+@using Litium.Accelerator.Constants;
+@using Litium.Studio.Extenssions;
+@using System.Configuration
+@model Litium.Accelerator.ViewModels.Station.StationListViewModel
+
+<div class="row">
+    <div class="columns small-12 medium-6 large-4 station-list__searchable-dropdown-section">
+        <div class="small-12 station-list__title-icon-container">
+            <h1 class="station-list__title"> @Model.Title </h1>
+            <div class="station-list__icon">
+                @{
+                    if (@Model.BoxIcon != null)
+                    {
+                        @Html.ImageFor(vm => vm.BoxIcon)
+                    }
+                }
+            </div>
+
+        </div>
+        <a class="station-list__show_nearby_station" onclick="stationListSwapImageToUserPositionMap();">
+            <div class="station-list__show_nearby_station_container">
+                <div class="station-list__show_nearby_station_icon">
+                    <i class="icon-pin"></i>
+                </div>
+                <div class="station-list__show_nearby_station_text">
+                    <strong>@("stationlist.getusercurrentpos.uppertext".AsWebSiteString())</strong>
+                    <br />
+                    @("stationlist.getusercurrentpos.lowertext".AsWebSiteString())
+                </div>
+            </div>
+        </a>
+        <div class="searchable-dropdown small-12">
+            @for (var i = 0; i < Model.StationList.Count; i++)
+            {
+                <div hidden data-value="@Model.StationList[i].StationPageUrl" data-text="@Model.StationList[i].Name"></div>
+            }
+        </div>
+        <button type="button" class="station-list__show-map-button" onclick="stationListSwapImageToDefaultMap();">@("stationlist.showstationsonmap.button".AsWebSiteString())</button>
+    </div>
+    @if (Model.PageImage != null)
+    {
+        var imageUrl = Model.PageImage.GetUrlToImage(Size.Empty, new Size(900, 500)).Url;
+        <div id="stationListImage" class="small-12 medium-6 large-8 station-list__image-container hide-for-small-only" style="background-image: url('@imageUrl')">
+            <span class="station-list__image-container__image-text" style="color:@Model.PageImageTextColor">@Html.Raw(Model.PageImageText)</span>
+        </div>
+    }
+    <div id="stationListMap" class="small-12 medium-6 large-8 station-list__map-container hide">
+        <div id="stationsMap"></div>
+    </div>
+</div>
+
+@Html.BlockContainer(Model.Blocks, BlockContainerNameConstant.Main)
+@{
+    var popUpImageUrl = Model.PopUpBackgroundImage?.GetUrlToImage(Size.Empty, Size.Empty)?.Url;
+}
+
+<div id="InformationPopup" data-background-image-url="@popUpImageUrl" data-information-text="@Model.PopUpInformationText" data-cookie-expiry-time="@Model.PopUpCookieExpiryTime"></div>
+
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=@ConfigurationManager.AppSettings["GoogleMapsApiKey"]&libraries=geometry"></script>
+<script type="text/javascript">
+    var stationLocations = [@Html.Raw(string.Concat(Model.StationList.Select(s => $"[ '{s.Name}', {s.CoordinatesLat}, {s.CoordinatesLong}, '{s.AddressStreetAddress}', '{s.AddressZipcode} {s.AddressCity}', '{s.StationPageUrl}', '{s.StationId}' ],")))];
+    function initMap(closestStation) {
+        var mapProp;
+        if (closestStation) {
+            mapProp = {
+                center: closestStation.pos,
+                zoom: 12,
+            };
+        }
+        else {
+            mapProp = {
+                center: new google.maps.LatLng(62.38583179, 16.321998712),
+                zoom: 4,
+            };
+        }
+        var map = new google.maps.Map(document.getElementById("stationsMap"), mapProp);
+        var infowindow = new google.maps.InfoWindow();
+        var marker, i;
+        for (i = 0; i < stationLocations.length; i++) {
+            marker = new google.maps.Marker({
+                position: new google.maps.LatLng(stationLocations[i][1], stationLocations[i][2]),
+                map: map,
+                icon: markerIcon()
+            });
+
+            let contentString = '<span style="font-weight: 900;">' + stationLocations[i][0] + '</span>' + '</br>' +
+                    '</br>' +
+                    stationLocations[i][3] + '</br>' +
+                    stationLocations[i][4] + '</br>' +
+                    '</br>' +
+                    '<a href="' + stationLocations[i][5] + '" style="font-weight: 900; color: @Model.MapInfoWindowLinkColor">@("stationlist.showstation.linktext".AsWebSiteString())</a>';
+
+            google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                return function() {
+                    infowindow.setContent(contentString);
+                    infowindow.open(map, marker);
+                }
+            })(marker, i));
+
+            if (closestStation && closestStation.stationId == stationLocations[i][6]) {
+                infowindow.setContent(contentString);
+                infowindow.open(map, marker);
+            }
+        }
+    }
+
+    function markerIcon() {
+        return {
+            // The marker icon SVG path
+            path: 'M11.83.09A8.08,8.08,0,0,0,3.75,8.17c0,2.37,1.89,6.37,3.49,9.37.81,1.52,1.69,3.08,2.49,4.28,1.3,2,1.61,2.18,2.1,2.18s.8-.24,2.11-2.18c.77-1.2,1.69-2.76,2.49-4.28,1.59-3,3.48-7,3.48-9.37A8.08,8.08,0,0,0,11.83.09Zm0,11.05a3,3,0,1,1,3-3A3,3,0,0,1,11.83,11.14Z',
+            fillColor: '@Model.MapPinColor',
+            fillOpacity: 1,
+            strokeWeight: 0,
+            scale: 1.2,
+            anchor: new google.maps.Point(10, 25)
+        };
+    }
+
+    function findClosestMarker(pos) {
+        var distances = [];
+        var closest = -1;
+        for (i = 0; i < stationLocations.length; i++) {
+            var makerPosition = new google.maps.LatLng(stationLocations[i][1], stationLocations[i][2]);
+            var d = google.maps.geometry.spherical.computeDistanceBetween(makerPosition, pos);
+            distances[i] = d;
+            if (closest == -1 || d < distances[closest]) {
+                closest = i;
+            }
+        }
+
+        var stationObj =
+        {
+            pos: new google.maps.LatLng(stationLocations[closest][1], stationLocations[closest][2]),
+            stationId: stationLocations[closest][6],
+        };
+
+        return stationObj;
+    }
+
+    function stationListSwapImageToDefaultMap() {
+        initMap();
+
+        var element = document.getElementById("stationListImage");
+        if (element) {
+            element.classList.add("hide");
+        }
+
+        var element = document.getElementById("stationListMap");
+        if (element) {
+            element.classList.remove("hide");
+            element.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+        }
+    }
+
+    function stationListSwapImageToUserPositionMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                var closestStation = findClosestMarker(new google.maps.LatLng(pos.lat, pos.lng));
+                initMap(closestStation);
+            },
+            function () {
+                initMap()
+            });
+        }
+        else {
+            // Browser doesn't support Geolocation
+            initMap();
+        }
+
+        var element = document.getElementById("stationListImage");
+        if (element) {
+            element.classList.add("hide");
+        }
+
+        var element = document.getElementById("stationListMap");
+        if (element) {
+            element.classList.remove("hide");
+            element.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
+        }
+    }
+</script>
