@@ -25,5 +25,10 @@
         public const string OrderConfirmation = "OrderConfirmation";
         public const string Station = "Station";
         public const string StationList = "StationList";
+        public const string AdminPortalLayout = "AdminPortalLayout";
+        public const string AdminPortalStartPage = "AdminPortalStartPage";
+
+
+
     }
 }

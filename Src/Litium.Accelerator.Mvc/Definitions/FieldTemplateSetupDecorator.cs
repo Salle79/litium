@@ -16,6 +16,7 @@ namespace Litium.Accelerator.Mvc.Definitions
         private readonly FieldTemplateSetup _parent;
         private readonly IDictionary<(Type areaType, string id), (Type controllerType, string action)> _controllerMapping = new Dictionary<(Type areaType, string id), (Type controllerType, string action)>
         {
+            [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.AdminPortalStartPage)] = (typeof(Controllers.AdminPortalStartPage.AdminPortalStartPageController), "Index"),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.Article)] = (typeof(Controllers.Article.ArticleController), nameof(Controllers.Article.ArticleController.Index)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.BrandList)] = (typeof(Controllers.Brand.BrandController), nameof(Controllers.Brand.BrandController.List)),
             [(typeof(Websites.WebsiteArea), PageTemplateNameConstants.Brand)] = (typeof(Controllers.Brand.BrandController), nameof(Controllers.Brand.BrandController.Index)),

@@ -16,4 +16,8 @@
     <PackageReference Include="Microsoft.AspNet.Mvc" Version="5.2.7" />
     <Reference Include="System.Web" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Builders\AdminPortalLayout\" />
+    <Folder Include="Builders\AdminPortalStartPage\" />
+  </ItemGroup>
 </Project>

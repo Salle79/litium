@@ -71,6 +71,8 @@
     <Compile Include="Attributes\FromJsonBodyAttribute.cs" />
     <Compile Include="Attributes\OrganizationRoleAttribute.cs" />
     <Compile Include="Attributes\ApiValidateAntiForgeryTokenAttribute.cs" />
+    <Compile Include="Controllers\AdminPortalLayout\AdminPortalLayoutController.cs" />
+    <Compile Include="Controllers\AdminPortalStartPage\AdminPortalStartPageController.cs" />
     <Compile Include="Controllers\Station\StationController.cs" />
     <Compile Include="Extensions\BlockContainerHelperExtension.cs" />
     <Compile Include="Controllers\Api\MyPageAddressController.cs" />
@@ -142,6 +144,7 @@
     </Compile>
     <Compile Include="ModelStates\ApiModelState.cs" />
     <Compile Include="ModelStates\MvcModelState.cs" />
+    <Content Include="AdminPortalStartPage.txt" />
     <Content Include="Site\Administration\Settings\acceleratorAdministrationSearchIndexingController.js" />
     <Content Include="Site\Administration\Settings\SearchIndexing.html" />
     <Content Include="Views\Order\BusinessCustomerOrder.cshtml" />
@@ -185,6 +188,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Site\Editor\" />
+    <Folder Include="Views\AdminPortalStartPage\" />
     <Folder Include="Views\Text\" />
   </ItemGroup>
   <ItemGroup>
@@ -263,6 +267,8 @@
     <None Include="packages.config" />
     <Content Include="Views\Station\Station.cshtml" />
     <Content Include="Views\Station\StationList.cshtml" />
+    <Content Include="Views\AdminPortalLayout\Index.cshtml" />
+    <Content Include="Views\AdminPortal\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
       <SubType>Designer</SubType>

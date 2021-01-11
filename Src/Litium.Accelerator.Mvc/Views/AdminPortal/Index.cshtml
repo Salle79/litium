@@ -1,0 +1,15 @@
+﻿@model Litium.Accelerator.ViewModels.AdminPortalStartPage.AdminPortalStartPageViewModel
+
+<div class="admin-portal-start-page">
+    @if (Model.LinkList != null && Model.LinkList.Any())
+    {
+        <div class="row admin-portal-start-page__links">
+            @foreach (var linkItem in Model.LinkList)
+            {
+                <div class="small-12 large-6">
+                    <a class="form__button" href="@linkItem.Href">@linkItem.Text</a>
+                </div>
+            }
+        </div>
+    }
+</div>
